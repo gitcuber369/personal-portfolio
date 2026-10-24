@@ -5,158 +5,185 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  IconBrandX,
-  IconRosetteDiscountCheckFilled,
-} from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { Tooltip as LinkTooltip } from "@/components/ui/tooltip-card";
+import { IconRosetteDiscountCheckFilled } from "@tabler/icons-react";
+import data from "@/data";
 import { GitcuberEffect } from "../apple-hello-effect";
 import Container from "../container";
+import { MARK_LAYOUT_ID, useIntroPhase } from "../intro";
 
 const Hero = () => {
-  const [effectKey, setEffectKey] = useState(0);
-
-  // wallpaper sources (from public/wallpapers)
-  const wallpapers = [
-    "/wallpapers/1.jpg",
-    "/wallpapers/11.jpg",
-    "/wallpapers/15.jpg",
-    "/wallpapers/19.jpg",
-    "/wallpapers/58.jpg",
-    "/wallpapers/7.jpg",
-  ];
-
-  const [current, setCurrent] = useState(0);
-
-  // preload images
-  useEffect(() => {
-    wallpapers.forEach((src) => {
-      const img = new window.Image();
-      img.src = src;
-    });
-  }, []);
-
-  // cycle wallpapers every 10s
-  useEffect(() => {
-    if (wallpapers.length <= 1) return;
-    const id = setInterval(() => {
-      setCurrent((c) => (c + 1) % wallpapers.length);
-    }, 10000);
-    return () => clearInterval(id);
-  }, [wallpapers.length]);
+  const phase = useIntroPhase();
+  const showMark = phase === "revealed" || phase === "skipped";
 
   return (
-    <div className="w-full border-b dark:border-border border-border/15 ">
-      <div className="w-full">
-        <Container className="items-center justify-center flex flex-col h-[30vh] bg-white/5 dark:bg-black/5 overflow-hidden relative">
-          <div className="relative flex items-center justify-center overflow-hidden w-full h-full">
-            {/* Background slideshow (absolute stacked layers) */}
-            <div
-              className="absolute inset-0 -z-10 pointer-events-none"
-              style={{
-                // mask: fully visible at the top (opacity 100%) and
-                // linearly fade to transparent at the bottom
-                WebkitMaskImage:
-                  "linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
-                maskImage:
-                  "linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%)",
-              }}
-            >
-              {wallpapers.map((src, i) => (
-                <div
-                  key={src}
-                  aria-hidden
-                  className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-linear ${
-                    i === current ? "opacity-100" : "opacity-0"
-                  }`}
-                  style={{ backgroundImage: `url(${src})` }}
-                />
-              ))}
-              {/* subtle tint + top/bottom fade to match light/dark backgrounds */}
-              <div className="absolute inset-0 pointer-events-none">
-                {/* subtle tint to reduce contrast */}
-                <div className="absolute inset-0 bg-black/6 dark:bg-black/20" />
-                {/* top-to-bottom blend: light mode -> fade to white at edges; dark mode -> fade to black at edges */}
-                <div className="absolute inset-0 pointer-events-none " />
-              </div>
-            </div>
-
-            {/* content */}
-            <div className="relative z-10 flex items-center justify-center w-full h-full">
-              <GitcuberEffect key={effectKey} className="lg:size-80 size-64" />
-            </div>
-          </div>
-        </Container>
-        <div className="relative mx-6 flex gap-4 flex-col justify-between">
-          {/* Profile image and name aligned vertically center */}
+    <div className="w-full">
+      <Container className="flex flex-col gap-6 px-6 py-10">
+        <div className="flex items-start gap-4">
           <img
             src="/profile.jpg"
             alt="profile picture"
-            className="size-28 rounded-full -mt-12"
+            className="size-12 rounded-full shrink-0"
           />
-          <div className="text-left flex flex-row items-center gap-3 justify-between w-full">
-            <div className="flex flex-row gap-3 items-center">
-              <h1
-                style={{ fontFamily: "var(--font-instrument-serif)" }}
-                className="lg:text-4xl text-2xl font-semibold text-black dark:text-white"
-              >
-                Arpit Chaudhary
+          <div className="flex flex-col justify-center">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-base font-semibold text-black dark:text-white">
+                {data.name}
               </h1>
-              <div className="text-center flex justify-center items-center">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <IconRosetteDiscountCheckFilled
-                      size={20}
-                      className="text-blue-400"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent className="text-center dark:text-white">
-                    <span>Verified</span>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+              <Tooltip>
+                <TooltipTrigger>
+                  <IconRosetteDiscountCheckFilled
+                    size={16}
+                    className="text-blue-400"
+                  />
+                </TooltipTrigger>
+                <TooltipContent className="text-center dark:text-white">
+                  <span>Verified</span>
+                </TooltipContent>
+              </Tooltip>
             </div>
-            <a
-              href="https://x.com/messages/compose?recipient_id=1737091389366644736"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Send a direct message on X"
-              className="flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 bg-cardColor text-white hover:bg-cardColorForeground py-4 shadow-premium h-6 px-3 text-xs hover:text-brand"
-            >
-              <IconBrandX className="text-neutral-500" />
-              <span className="font-['Manrope'] dark:text-white text-black font-semibold">
-                Twitter DM
-              </span>
-            </a>
+            <p className="text-sm text-neutral-500">Engineer</p>
           </div>
-
-          <div className="pb-4 max-w-3xl">
-            <div className="space-y-3">
-              <p className="text-sm text-left text-neutral-700 dark:text-neutral-300 font-['Manrope'] leading-snug tracking-tight">
-                React Native–focused mobile engineer crafting fast, accessible,
-                and polished apps for iOS and Android. Pragmatic with
-                Swift/SwiftUI, Kotlin, and React Native—choosing what delivers
-                the best experience. Partnered with{" "}
-                <span className="inline-block font-semibold text-black dark:text-white">
-                  5+ freelance clients
-                </span>{" "}
-                and shipped production apps published on the{" "}
-                <span className="inline-block font-semibold text-black dark:text-white">
-                  App Store
-                </span>{" "}
-                and{" "}
-                <span className="inline-block font-semibold text-black dark:text-white">
-                  Play Store
-                </span>{" "}
-                . Focused on performance, delightful micro‑interactions, and
-                clean, testable architecture.
-              </p>
-            </div>
-          </div>
+          {showMark && (
+            <GitcuberEffect
+              layoutId={MARK_LAYOUT_ID}
+              isStatic
+              loop
+              transition={{ layout: { duration: 0.8, ease: "easeOut" } }}
+              className="h-7 sm:h-10 ml-auto stroke-black dark:stroke-white"
+            />
+          )}
         </div>
-      </div>
+
+        <div className="flex max-w-[66ch] flex-col gap-4 text-[15px] leading-7 text-neutral-600 dark:text-neutral-400">
+          <p>
+            I&rsquo;m a full-stack and agent developer at{" "}
+            <LinkTooltip
+              containerClassName="text-neutral-600 dark:text-neutral-400"
+              content={
+                <SitePreview
+                  title="Conqr"
+                  url="conqr.ai"
+                  image="/api/og?url=https://conqr.ai"
+                  description="I work on the full stack and the agentic part of Conqr."
+                />
+              }
+            >
+              <a
+                href="https://conqr.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black dark:text-white underline underline-offset-2"
+              >
+                Conqr
+              </a>
+            </LinkTooltip>
+            , where I build the product end to end and the AI agents behind it.
+            Right now I&rsquo;m building Argus, a reasoning agent from scratch,
+            to understand agents from the primitives up, not just the framework
+            that wraps them.
+          </p>
+
+          <p>
+            On the side I&rsquo;ve shipped with 5+ freelance clients, with React
+            Native apps now live on the App Store and Play Store. Performance,
+            micro-interactions that feel right, and architecture that survives
+            the second year.
+          </p>
+
+          <p>
+            You can reach me at{" "}
+            <LinkTooltip
+              containerClassName="text-neutral-600 dark:text-neutral-400"
+              content={
+                <SitePreview
+                  avatar="/profile.jpg"
+                  title={`@${data.socialMedia.twitter.split("/").pop()}`}
+                  url="twitter.com"
+                  description="Shipping notes, half-finished agent experiments, and the occasional opinion."
+                />
+              }
+            >
+              <a
+                href={data.socialMedia.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black dark:text-white underline underline-offset-2"
+              >
+                Twitter
+              </a>
+            </LinkTooltip>
+            , or see my code on{" "}
+            <LinkTooltip
+              containerClassName="text-neutral-600 dark:text-neutral-400"
+              content={
+                <SitePreview
+                  avatar={`${data.socialMedia.github}.png`}
+                  title={data.aka}
+                  url="github.com"
+                  image={`/api/og?url=${data.socialMedia.github}`}
+                  description="React Native and Next.js work, plus whatever I'm taking apart this month."
+                />
+              }
+            >
+              <a
+                href={data.socialMedia.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black dark:text-white underline underline-offset-2"
+              >
+                GitHub
+              </a>
+            </LinkTooltip>
+            .
+          </p>
+        </div>
+      </Container>
     </div>
   );
 };
+
+const SitePreview = ({
+  title,
+  url,
+  description,
+  avatar,
+  image,
+}: {
+  title: string;
+  url: string;
+  description: string;
+  avatar?: string;
+  image?: string;
+}) => (
+  <div className="flex flex-col gap-2">
+    {image && (
+      <img
+        src={image}
+        alt=""
+        loading="lazy"
+        className="aspect-[1200/630] w-full rounded-md border border-neutral-200 dark:border-neutral-800 object-cover bg-neutral-100 dark:bg-neutral-900"
+      />
+    )}
+    <div className="flex items-center gap-2">
+      {avatar && (
+        <img
+          src={avatar}
+          alt=""
+          className="size-7 rounded-full object-cover shrink-0"
+        />
+      )}
+      <div className="flex flex-col">
+        <p className="text-sm font-semibold text-black dark:text-white">
+          {title}
+        </p>
+        <p className="text-[10px] text-neutral-500">{url}</p>
+      </div>
+    </div>
+    <p className="text-xs leading-5 text-neutral-600 dark:text-neutral-400">
+      {description}
+    </p>
+  </div>
+);
 
 export default Hero;
